@@ -12,18 +12,21 @@ import System.IO.Unsafe
 -- Program
 
 assignSanta :: [String] -> [(String, String)]
-assignSanta s = if noSantaOfSelf assn then assn else assignSanta s
+assignSanta s = if nonReflexive assn then assn else assignSanta s
   where
     assn = zip s (unsafePerformIO $ shuffle s)
 
-noSantaOfSelf [] = True
-noSantaOfSelf ((s,r):xs) | s == r = False
-                         | otherwise = True && noSantaOfSelf xs
+-- Relation is non-reflexive; no one is santa of himself.
+nonReflexive :: (Eq a) => [(a,a)] -> Bool
+nonReflexive [] = True
+nonReflexive ((s,r):xs) | s /= r = True && nonReflexive xs
+                        | otherwise = False
 
 
 -- Postconditions
---  all members occur as santa once
---  all members occur as receiver once
---  there are no santas that are not members
---  there are no receivers that are not members
---  no member is santa to himself
+--  all members occur as santa once (if (x,y), then no (x,z))
+--  all members occur as receiver once (if (x,y), then no (z,y))
+--  there are no santas that are not members (if (x,y), then also (z,x))
+--  there are no receivers that are not members (if (x,y), then also (y,z))
+--  no member is santa to himself (no (x,x))
+-- ?no two members are santa to each other (if (x,y), then no (y,x))

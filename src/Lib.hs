@@ -3,6 +3,7 @@ module Lib where
 import Shuffle (shuffle)
 import System.IO.Unsafe (unsafePerformIO)
 import Data.List.Unique (allUnique)
+import Data.List (nub)
 
 -- PRECONDITIONS
 
@@ -38,6 +39,10 @@ checkPostconditions xs =
 -- POSTCONDITIONS
 
 -- All members occur as santa once (if (x,y), then no (x,z))
+domainMembersUnique :: (Eq a) => [(a,a)] -> Bool
+domainMembersUnique xs = (nub domain) == domain
+  where
+    domain = map fst xs
 
 -- All members occur as receiver once (if (x,y), then no (z,y))
 
